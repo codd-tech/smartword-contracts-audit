@@ -32,6 +32,28 @@ contract('PrivateTokenSale', function ([owner, controller, account]) {
     it('totalBalance equals zero', async function () {
       expect(await this.tokenSale.totalBalance()).to.be.bignumber.equal(BN(0));
     });
+
+    it('scheduleStartTimestamp equals zero', async function () {
+      expect(await this.tokenSale.scheduleStartTimestamp()).to.be.bignumber.equal(BN(0));
+    });
+
+    it('scheduleStartTimestamp equals zero', async function () {
+      expect(await this.tokenSale.scheduleStartTimestamp()).to.be.bignumber.equal(BN(0));
+    });
+
+    it('unable to withdraw before schedule launch', async function () {
+      await this.tokenSale.addBalance(account, 100, { from: controller });
+
+      await expectRevert(
+        this.tokenSale.withdraw(account, 10, { from: account }),
+        'ScheduledTokenSale: Unlock schedule not started yet',
+      );
+    });
+
+    it('unlockedOf equals zero before schedule launch', async function () {
+      await this.tokenSale.addBalance(account, 100, { from: controller });
+      expect(await this.tokenSale.unlockedOf(owner)).to.be.bignumber.equal(BN(0));
+    });
   });
 
   describe('test access control', async function () {
@@ -50,6 +72,15 @@ contract('PrivateTokenSale', function ([owner, controller, account]) {
       );
 
       await this.tokenSale.addBalance(account, 100, { from: controller });
+    });
+
+    it('only controller role can call launchSale', async function () {
+      await expectRevert(
+        this.tokenSale.launchSale({ from: account }),
+        'AccessControl: account ' + account.toLowerCase() + ' is missing role ' + CONTROLLER_ROLE,
+      );
+
+      await this.tokenSale.launchSale({ from: controller });
     });
   });
 
@@ -90,6 +121,7 @@ contract('PrivateTokenSale', function ([owner, controller, account]) {
     let snapshot_;
     beforeEach(async function () {
       snapshot_ = await snapshot();
+      await this.tokenSale.launchSale({ from: controller });
     });
 
     afterEach(async function () {
@@ -144,6 +176,7 @@ contract('PrivateTokenSale', function ([owner, controller, account]) {
     let snapshot_;
     beforeEach(async function () {
       snapshot_ = await snapshot();
+      await this.tokenSale.launchSale({ from: controller });
     });
 
     afterEach(async function () {
@@ -169,7 +202,7 @@ contract('PrivateTokenSale', function ([owner, controller, account]) {
     it.skip('unlock schedule not started yet', async function () {
       await this.tokenSale.addBalance(account, amount, { from: controller });
       await expectRevert(
-        this.tokenSale.withdraw(ZERO_ADDRESS, 0),
+        this.tokenSale.withdraw(account, 0),
         'ScheduledTokenSale: Unlock schedule not started yet',
       );
     });

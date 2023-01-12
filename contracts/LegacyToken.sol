@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
 
 /**
- * @dev: deprecated legacy token
+ * @dev deprecated legacy token
  */
 contract LegacyToken is ERC20, ERC20Burnable, Claimable {
     constructor() ERC20("Legacy Token", "LGS") {}

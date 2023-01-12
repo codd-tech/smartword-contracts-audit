@@ -9,8 +9,8 @@ import "./ScheduledTokenSale.sol";
  * @dev See ScheduledTokenSale contract for details
  */
 contract TeamTokenSale is ScheduledTokenSale {
-    // solhint-disable-next-line no-empty-blocks, not-rely-on-time
-    constructor(IERC20 token) ScheduledTokenSale(token, block.timestamp) {}
+    // solhint-disable-next-line no-empty-blocks
+    constructor(IERC20 token) ScheduledTokenSale(token) {}
 
     function _initUnlockSchedule() internal override {
         unlockSchedule.push(UnlockScheduleItem(0 days, 1450));

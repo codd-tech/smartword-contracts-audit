@@ -15,12 +15,16 @@ import "@openzeppelin/contracts/token/ERC20/utils/SafeERC20.sol";
 abstract contract ScheduledTokenSale is AccessControl {
     using SafeERC20 for IERC20;
 
-    event Deposit(address sender, address to, uint256 amount);
+    event Deposit(
+        address sender,
+        address indexed to,
+        uint256 amount
+    );
 
     bytes32 public constant CONTROLLER_ROLE = keccak256("CONTROLLER_ROLE");
     uint16 private constant PERCENT_DENOMINATOR = 10_000;
 
-    uint256 public scheduleStartTimestamp;
+    uint256 public scheduleStartTimestamp = 0;
 
     mapping(address => uint256) private _balances;
     mapping(address => uint256) private _withdrawnBalances;
@@ -38,7 +42,7 @@ abstract contract ScheduledTokenSale is AccessControl {
 
     function _initUnlockSchedule() internal virtual;
 
-    constructor(IERC20 token, uint256 scheduleStartTimestamp_) {
+    constructor(IERC20 token) {
         require(
             address(token) != address(0),
             "ScheduledTokenSale: New token address cannot be null"
@@ -48,10 +52,15 @@ abstract contract ScheduledTokenSale is AccessControl {
         _setRoleAdmin(CONTROLLER_ROLE, DEFAULT_ADMIN_ROLE);
 
         _token = token;
-        scheduleStartTimestamp = scheduleStartTimestamp_;
 
         _initUnlockSchedule();
         _validateUnlockSchedule();
+    }
+
+    function launchSale() external onlyRole(CONTROLLER_ROLE) {
+        require(scheduleStartTimestamp == 0, "ScheduledTokenSale: Sale already launched");
+        // solhint-disable-next-line not-rely-on-time
+        scheduleStartTimestamp = block.timestamp;
     }
 
     function addBalance(
@@ -71,7 +80,7 @@ abstract contract ScheduledTokenSale is AccessControl {
             "ScheduledTokenSale: Withdraw amount must be greater than zero"
         );
         require(
-            scheduleStartTimestamp < block.timestamp, // solhint-disable-line not-rely-on-time
+            scheduleStartTimestamp > 0 && scheduleStartTimestamp < block.timestamp, // solhint-disable-line not-rely-on-time
             "ScheduledTokenSale: Unlock schedule not started yet"
         );
         require(
@@ -90,17 +99,21 @@ abstract contract ScheduledTokenSale is AccessControl {
     }
 
     function unlockedOf(address account) public view returns (uint256) {
-        uint256 totalUnlocked = Math.mulDiv(
-            _balances[account],
-            getUnlockedPercent(block.timestamp - scheduleStartTimestamp), // solhint-disable-line not-rely-on-time
-            PERCENT_DENOMINATOR
-        );
+        if (scheduleStartTimestamp > 0) {
+            uint256 totalUnlocked = Math.mulDiv(
+                _balances[account],
+                getUnlockedPercent(block.timestamp - scheduleStartTimestamp), // solhint-disable-line not-rely-on-time
+                PERCENT_DENOMINATOR
+            );
 
-        if (totalUnlocked <= _withdrawnBalances[account]) {
-            return 0;
+            if (totalUnlocked <= _withdrawnBalances[account]) {
+                return 0;
+            }
+
+            return totalUnlocked - _withdrawnBalances[account];
         }
 
-        return totalUnlocked - _withdrawnBalances[account];
+        return 0;
     }
 
     function getUnlockedPercent(

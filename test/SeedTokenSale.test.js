@@ -64,10 +64,10 @@ contract('SeedTokenSale', function ([owner, controller, account, other]) {
       expect(await this.tokenSale.unlockedOf(owner)).to.be.bignumber.equal(new BN('0'));
     });
 
-    it('should revert on insufficient SWG balance', async function () {
+    it('should revert on insufficient LegacyToken balance', async function () {
       await expectRevert(
         this.tokenSale.methods['convert(address,uint256)'](account, 20, { from: account }),
-        'SeedTokenSale: Insufficient SWG balance',
+        'SeedTokenSale: Insufficient LegacyToken balance',
       );
     });
 
@@ -80,10 +80,10 @@ contract('SeedTokenSale', function ([owner, controller, account, other]) {
       );
     });
 
-    it('should revert on insufficient SWG balance', async function () {
+    it('should revert on insufficient LegacyToken balance', async function () {
       await expectRevert(
         this.tokenSale.methods['convert(address,uint256)'](account, 20, { from: account }),
-        'SeedTokenSale: Insufficient SWG balance',
+        'SeedTokenSale: Insufficient LegacyToken balance',
       );
     });
 
@@ -93,7 +93,7 @@ contract('SeedTokenSale', function ([owner, controller, account, other]) {
 
       await expectRevert(
         this.tokenSale.methods['convert(address,uint256)'](account, 20, { from: account }),
-        'SeedTokenSale: Not enough SWG allowance',
+        'SeedTokenSale: Not enough LegacyToken allowance',
       );
     });
   });

@@ -5,9 +5,9 @@ import "./ScheduledTokenSale.sol";
 import "./LegacyToken.sol";
 
 /**
- * @title Smartcontract for exchanging SWG to SWGT with unlock schedule
+ * @title Smartcontract for exchanging LegacyToken to SWGT with unlock schedule
  * @author https://codd.tech
- * @dev SeedTokenSale contract implements swapping SWG tokens for SWGT and unlock schedule
+ * @dev SeedTokenSale contract implements swapping Legacy tokens for SWGT and unlock schedule
  * SWG tokens are burned in the process.
  * It should be deployed in several steps:
  * 1. Deploy Exchanger with proper token addresses
@@ -19,14 +19,14 @@ import "./LegacyToken.sol";
  * see ScheduledTokenSale contract for details
  */
 contract SeedTokenSale is ScheduledTokenSale {
-    event TokenExchanged(address from, address to, uint256 amount);
+    event TokenExchanged(address indexed from, address indexed to, uint256 amount);
 
     LegacyToken private tokenOld;
 
     constructor(
         IERC20 token,
         LegacyToken tokenOld_
-    ) ScheduledTokenSale(token, block.timestamp) { // solhint-disable-line no-empty-blocks, not-rely-on-time
+    ) ScheduledTokenSale(token) {
         require(
             address(tokenOld_) != address(0),
             "SeedTokenSale: Old token address cannot be null"
@@ -68,11 +68,11 @@ contract SeedTokenSale is ScheduledTokenSale {
     ) internal virtual {
         require(
             tokenOld.balanceOf(from) >= amount,
-            "SeedTokenSale: Insufficient SWG balance"
+            "SeedTokenSale: Insufficient LegacyToken balance"
         );
         require(
             tokenOld.allowance(from, address(this)) >= amount,
-            "SeedTokenSale: Not enough SWG allowance"
+            "SeedTokenSale: Not enough LegacyToken allowance"
         );
 
         tokenOld.burnFrom(from, amount);
