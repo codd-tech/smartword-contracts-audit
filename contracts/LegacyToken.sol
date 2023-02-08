@@ -22,7 +22,10 @@ contract LegacyToken is ERC20, ERC20Burnable, Claimable {
      * @return A boolean that indicates if the operation was successful.
      */
     function mint(address to, uint256 value) public onlyOwner returns (bool) {
-        require(value > 0);
+        require(
+            value > 0,
+            "LegacyToken: Mint amount amount must be greater than zero"
+        );
         _mint(to, value);
         return true;
     }
