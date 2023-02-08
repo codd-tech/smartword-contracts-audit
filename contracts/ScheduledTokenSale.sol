@@ -49,7 +49,6 @@ abstract contract ScheduledTokenSale is AccessControl {
         );
 
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
-        _setRoleAdmin(CONTROLLER_ROLE, DEFAULT_ADMIN_ROLE);
 
         token = token_;
 
