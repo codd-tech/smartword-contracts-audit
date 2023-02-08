@@ -38,20 +38,20 @@ abstract contract ScheduledTokenSale is AccessControl {
 
     UnlockScheduleItem[] internal unlockSchedule;
 
-    IERC20 private _token;
+    IERC20 public token;
 
     function _initUnlockSchedule() internal virtual;
 
-    constructor(IERC20 token) {
+    constructor(IERC20 token_) {
         require(
-            address(token) != address(0),
+            address(token_) != address(0),
             "ScheduledTokenSale: New token address cannot be null"
         );
 
         _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
         _setRoleAdmin(CONTROLLER_ROLE, DEFAULT_ADMIN_ROLE);
 
-        _token = token;
+        token = token_;
 
         _initUnlockSchedule();
         _validateUnlockSchedule();
@@ -90,7 +90,7 @@ abstract contract ScheduledTokenSale is AccessControl {
 
         _withdrawnBalances[msg.sender] += amount;
         totalBalance -= amount;
-        _token.safeTransfer(to, amount);
+        token.safeTransfer(to, amount);
         return true;
     }
 
@@ -135,7 +135,7 @@ abstract contract ScheduledTokenSale is AccessControl {
             "ScheduledTokenSale: Balance amount must be greater than zero"
         );
         require(
-            totalBalance + amount <= _token.balanceOf(address(this)),
+            totalBalance + amount <= token.balanceOf(address(this)),
             "ScheduledTokenSale: Total balance exceeds available balance"
         );
 
