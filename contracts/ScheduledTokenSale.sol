@@ -151,6 +151,7 @@ abstract contract ScheduledTokenSale is AccessControl {
 
     function _validateUnlockSchedule() private view {
         assert(unlockSchedule.length > 0);
+        assert(unlockSchedule[unlockSchedule.length - 1].totalPercentageUnlocked == PERCENT_DENOMINATOR);
 
         for (uint8 i = 1; i < unlockSchedule.length; ++i) {
             assert(
