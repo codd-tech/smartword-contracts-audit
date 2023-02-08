@@ -119,14 +119,10 @@ abstract contract ScheduledTokenSale is AccessControl {
     function getUnlockedPercent(
         uint256 secondsPassed
     ) internal view returns (uint16) {
-        uint16 unlockedPercentage = 0;
-        for (uint8 i = 0; i < unlockSchedule.length; ++i) {
-            if (unlockSchedule[i].unlockTimePass < secondsPassed) {
-                unlockedPercentage = unlockSchedule[i].totalPercentageUnlocked;
-            }
-        }
+        uint8 index = 0;
+        while(index < unlockSchedule.length && unlockSchedule[index].unlockTimePass < secondsPassed) { index++; }
 
-        return unlockedPercentage;
+        return index > 0 ? unlockSchedule[index - 1].totalPercentageUnlocked : 0;
     }
 
     function _addBalance(address to, uint256 amount) internal {
@@ -150,7 +146,7 @@ abstract contract ScheduledTokenSale is AccessControl {
     }
 
     function _validateUnlockSchedule() private view {
-        assert(unlockSchedule.length > 0);
+        assert(unlockSchedule.length > 1);
         assert(unlockSchedule[unlockSchedule.length - 1].totalPercentageUnlocked == PERCENT_DENOMINATOR);
 
         for (uint8 i = 1; i < unlockSchedule.length; ++i) {
