@@ -1,6 +1,7 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.17;
 
+import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "./ScheduledTokenSale.sol";
 import "./LegacyToken.sol";
 
@@ -18,7 +19,7 @@ import "./LegacyToken.sol";
  * 3. After some time, when funds unlocked according to schedule, user can call method SeedTokenSale.withdraw
  * see ScheduledTokenSale contract for details
  */
-contract SeedTokenSale is ScheduledTokenSale {
+contract SeedTokenSale is ScheduledTokenSale, ReentrancyGuard {
     event TokenExchanged(address indexed from, address indexed to, uint256 amount);
 
     LegacyToken private tokenOld;
@@ -65,7 +66,7 @@ contract SeedTokenSale is ScheduledTokenSale {
         address from,
         address to,
         uint256 amount
-    ) internal virtual {
+    ) internal virtual nonReentrant {
         require(
             tokenOld.balanceOf(from) >= amount,
             "SeedTokenSale: Insufficient LegacyToken balance"
