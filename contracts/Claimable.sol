@@ -46,6 +46,10 @@ contract Claimable {
      * @param newOwner The address to transfer ownership to.
      */
     function transferOwnership(address newOwner) public onlyOwner {
+        require(
+            address(newOwner) != address(0),
+            "Claimable: New owner address cannot be null"
+        );
         pendingOwner = newOwner;
     }
 
