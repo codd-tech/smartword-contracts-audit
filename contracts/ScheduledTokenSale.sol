@@ -150,9 +150,6 @@ abstract contract ScheduledTokenSale is AccessControl {
 
         for (uint8 i = 1; i < unlockSchedule.length; ++i) {
             assert(
-                unlockSchedule[i].totalPercentageUnlocked <= PERCENT_DENOMINATOR
-            );
-            assert(
                 unlockSchedule[i - 1].unlockTimePass <
                     unlockSchedule[i].unlockTimePass
             );
@@ -161,5 +158,9 @@ abstract contract ScheduledTokenSale is AccessControl {
                     unlockSchedule[i].totalPercentageUnlocked
             );
         }
+
+        assert(
+            unlockSchedule[unlockSchedule.length - 1].totalPercentageUnlocked == PERCENT_DENOMINATOR
+        );
     }
 }
