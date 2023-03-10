@@ -37,23 +37,6 @@ contract('SWGT', function ([owner, account]) {
     });
   });
 
-  describe('test change of token ownership', function () {
-    it('token owner is the owner', async function () {
-      expect(await this.token.owner()).to.be.equal(owner);
-    });
-
-    it('token owner transfers ownership', async function () {
-      await this.token.transferOwnership(account);
-      expect(await this.token.pendingOwner()).to.be.equal(account);
-    });
-
-    it('token pendingOwner accepts ownership', async function () {
-      await this.token.transferOwnership(account);
-      await this.token.acceptOwnership({ from: account });
-      expect(await this.token.owner()).to.be.equal(account);
-    });
-  });
-
   describe('test token burning', function () {
     it('burn some tokens', async function () {
       const initialTotalSupply = new BN(await this.token.totalSupply());

@@ -11,7 +11,7 @@ import "@openzeppelin/contracts/access/Ownable2Step.sol";
  * @author https://codd.tech
  * @notice Smart contract implements token for SmartWorld Global
  */
-contract SWGT is ERC20, ERC20Burnable, Ownable2Step {
+contract SWGT is ERC20, ERC20Burnable {
     constructor() ERC20("SmartWorld Global Token", "SWGT") {
         _mint(msg.sender, TOTAL_SWGT_SUPPLY * 10 ** decimals());
     }
