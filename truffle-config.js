@@ -12,6 +12,12 @@ module.exports = {
       port: 8555,
       gasPrice: 0x01,
     },
+    stage: {
+      host: 'localhost',
+      port: 8545,
+      network_id: '*', // eslint-disable-line camelcase
+      gas: 0x6691b7,
+    }
   },
   compilers: {
     solc: {

@@ -6,6 +6,7 @@
     "build": "scripts/build.sh",
     "compile": "truffle compile",
     "console": "truffle console",
+    "migrate": "truffle migrate",
     "coverage": "scripts/coverage.sh",
     "lint": "npm run lint:js && npm run lint:sol",
     "lint:fix": "npm run lint:js:fix",
